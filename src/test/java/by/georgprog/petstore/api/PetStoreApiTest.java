@@ -9,10 +9,7 @@ import by.georgprog.petstore.api.specs.Specifications;
 import by.georgprog.petstore.api.util.DateTimeUtil;
 import io.restassured.module.jsv.JsonSchemaValidator;
 import io.restassured.path.json.JsonPath;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -31,6 +28,7 @@ public class PetStoreApiTest {
     }
 
     @Test
+    @Tag("positive")
     @DisplayName("Positive: Get Pet Inventories by Status")
     public void testGetInventories() {
         Specifications.installSpecs(Specifications.reqSpec(URI, JSON), Specifications.resSpec(HttpStatus.OK));
@@ -41,6 +39,7 @@ public class PetStoreApiTest {
     }
 
     @Test
+    @Tag("positive")
     @DisplayName("Positive: Place an order for a pet")
     public void testPlaceOrder() {
         Specifications.installSpecs(Specifications.reqSpec(URI, JSON), Specifications.resSpec(HttpStatus.OK));
@@ -59,6 +58,7 @@ public class PetStoreApiTest {
     }
 
     @Test
+    @Tag("negative")
     @DisplayName("Negative: Place an invalid order for a pet")
     public void testPlaceInvalidOrder() {
         Specifications.installSpecs(Specifications.reqSpec(URI, JSON), Specifications.resSpec(HttpStatus.BAD_REQUEST));
@@ -67,6 +67,7 @@ public class PetStoreApiTest {
     }
 
     @Test
+    @Tag("positive")
     @DisplayName("Positive: Find Purchase Order by ID")
     public void testFindOrderById() {
         Specifications.installSpecs(Specifications.reqSpec(URI, JSON), Specifications.resSpec(HttpStatus.OK));
@@ -86,6 +87,7 @@ public class PetStoreApiTest {
     }
 
     @Test
+    @Tag("negative")
     @DisplayName("Negative: Find Non-existing Purchase Order by ID")
     public void testFindOrderByInvalidId() {
         Specifications.installSpecs(Specifications.reqSpec(URI, JSON), Specifications.resSpec(HttpStatus.NOT_FOUND));
@@ -96,6 +98,7 @@ public class PetStoreApiTest {
     }
 
     @Test
+    @Tag("positive")
     @DisplayName("Positive: Delete Purchase Order by ID")
     public void testDeleteOrderById() {
         Specifications.installSpecs(Specifications.reqSpec(URI, JSON), Specifications.resSpec(HttpStatus.OK));
@@ -107,6 +110,7 @@ public class PetStoreApiTest {
     }
 
     @Test
+    @Tag("negative")
     @DisplayName("Negative: Delete Non-existing Purchase Order by ID")
     public void testDeleteNonExistingOrderById() {
         Specifications.installSpecs(Specifications.reqSpec(URI, JSON), Specifications.resSpec(HttpStatus.NOT_FOUND));
