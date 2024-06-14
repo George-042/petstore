@@ -1,7 +1,5 @@
 package by.georgprog.petstore.api.util;
 
-import by.georgprog.petstore.api.consts.DateTime;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
