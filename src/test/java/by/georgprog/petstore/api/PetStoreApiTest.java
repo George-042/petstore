@@ -10,10 +10,13 @@ import by.georgprog.petstore.api.util.DateTimeUtil;
 import io.restassured.module.jsv.JsonSchemaValidator;
 import io.restassured.path.json.JsonPath;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static by.georgprog.petstore.api.consts.Urls.URI;
 import static io.restassured.http.ContentType.JSON;
@@ -38,12 +41,12 @@ public class PetStoreApiTest {
         Assertions.assertFalse(map.isEmpty(), "Expected non-empty inventory");
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("getOrderForPet")
     @Tag("positive")
     @DisplayName("Positive: Place an order for a pet")
-    public void testPlaceOrder() {
+    public void testPlaceOrder(OrderDto orderFromProvider) {
         Specifications.installSpecs(Specifications.reqSpec(URI, JSON), Specifications.resSpec(HttpStatus.OK));
-        OrderDto orderFromProvider = OrderDataProvider.getOrderForPet();
         JsonPath jsonPath = storeClient.placeOrder(orderFromProvider);
         OrderDto orderFromResponse = jsonPath.getObject("", OrderDto.class);
         LocalDateTime dateTime1 =
@@ -66,12 +69,12 @@ public class PetStoreApiTest {
         Assertions.assertEquals("No data", jsonPath.get("message"), "Expected an error message");
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("getOrderForPet")
     @Tag("positive")
     @DisplayName("Positive: Find Purchase Order by ID")
-    public void testFindOrderById() {
+    public void testFindOrderById(OrderDto orderFromProvider) {
         Specifications.installSpecs(Specifications.reqSpec(URI, JSON), Specifications.resSpec(HttpStatus.OK));
-        OrderDto orderFromProvider = OrderDataProvider.getOrderForPet();
         storeClient.placeOrder(orderFromProvider);
         JsonPath jsonPath = storeClient.findOrderById(orderFromProvider.getId());
         OrderDto orderFromResponse = jsonPath.getObject("", OrderDto.class);
@@ -97,12 +100,12 @@ public class PetStoreApiTest {
                 "Expected an error message");
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("getOrderForPet")
     @Tag("positive")
     @DisplayName("Positive: Delete Purchase Order by ID")
-    public void testDeleteOrderById() {
+    public void testDeleteOrderById(OrderDto orderFromProvider) {
         Specifications.installSpecs(Specifications.reqSpec(URI, JSON), Specifications.resSpec(HttpStatus.OK));
-        OrderDto orderFromProvider = OrderDataProvider.getOrderForPet();
         storeClient.placeOrder(orderFromProvider);
         JsonPath response = storeClient.deleteOrderById(orderFromProvider.getId());
         Assertions.assertEquals(orderFromProvider.getId(), response.getLong("message"),
@@ -118,5 +121,9 @@ public class PetStoreApiTest {
         JsonPath response = storeClient.deleteOrderById(nonExistingOrderId);
         Assertions.assertEquals("Order Not Found", response.get("message"),
                 "Expected an error message");
+    }
+
+    private static Stream<OrderDto> getOrderForPet() {
+        return Stream.of(OrderDataProvider.getOrderForPet());
     }
 }
